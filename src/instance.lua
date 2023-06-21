@@ -45,6 +45,13 @@ local function DisconnectEvents(Listenr: RBXScriptConnection | {RBXScriptConnect
 	end
 end
 
+local function load_modules(parent: Instance , deep: boolean)
+	local children = deep == true and parent:GetDescendants() or parent:GetChildren()
+	for _ , module in children do
+		if not module:IsA("ModuleScript") then continue end
+		require(module)
+	end
+end
 
 local c_Instance = {}
 
@@ -52,6 +59,6 @@ c_Instance.ClearInstance 	= ClearInstance
 c_Instance.GetValue		 	= GetValue
 c_Instance.Import 			= Import
 c_Instance.DisconnectEvents = DisconnectEvents
-
+c_Instance.load_modules 	= load_modules
 
 return c_Instance
