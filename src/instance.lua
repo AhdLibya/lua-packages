@@ -53,12 +53,11 @@ local function load_modules(parent: Instance , deep: boolean)
 	end
 end
 
-local c_Instance = {}
 
-c_Instance.ClearInstance 	= ClearInstance
-c_Instance.GetValue		 	= GetValue
-c_Instance.Import 			= Import
-c_Instance.DisconnectEvents = DisconnectEvents
-c_Instance.load_modules 	= load_modules
-
-return c_Instance
+return {
+	clear_instance 		= ClearInstance;
+	get_value			= GetValue;
+	import 				= Import;
+	disconnect_events	= DisconnectEvents;
+	load_modules 		= load_modules;
+}
