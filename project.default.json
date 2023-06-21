@@ -1,6 +1,6 @@
 {
 	"name": "lua-packages",
 	"tree": {
-		"$path": "src"
+		"$path": "src/**"
 	}
 }
