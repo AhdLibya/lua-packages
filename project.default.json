@@ -1,5 +1,5 @@
 {
-	"name": "Observers",
+	"name": "lua-packages",
 	"tree": {
 		"$path": "src"
 	}
