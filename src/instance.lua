@@ -47,10 +47,12 @@ end
 
 local function load_modules(parent: Instance , deep: boolean)
 	local children = deep == true and parent:GetDescendants() or parent:GetChildren()
+	local tbl = {} :: {[string]: table}
 	for _ , module in children do
 		if not module:IsA("ModuleScript") then continue end
-		require(module)
+		tbl[module.Name] = require(module)
 	end
+	return tbl
 end
 
 
