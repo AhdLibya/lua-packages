@@ -55,11 +55,21 @@ local function load_modules(parent: Instance , deep: boolean)
 	return tbl
 end
 
+local function  find_or_create_folder(Parent: Instance , Name: string)
+	local instance = Parent:FindFirstChild(Name) :: Folder
+	if not instance then
+		instance = Instance.new("Folder")
+		instance.Name = Name
+		instance.Parent = Parent
+	end
+	return instance
+end
 
 return {
-	clear_instance 		= ClearInstance;
-	get_value			= GetValue;
-	import 				= Import;
-	disconnect_events	= DisconnectEvents;
-	load_modules 		= load_modules;
+	clear_instance 			= ClearInstance;
+	get_value				= GetValue;
+	import 					= Import;
+	disconnect_events		= DisconnectEvents;
+	load_modules 			= load_modules;
+	find_or_create_folder 	= find_or_create_folder
 }
