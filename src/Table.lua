@@ -113,6 +113,12 @@ function Table.update_values(folder: Folder , data: Dictionarie<any>)
 	end
 end
 
+function Table.for_each<k , v>(t: {[k]: v} , func: (key: k , value: v) -> ())
+	for key , value in t do
+		func(key , value)
+	end
+end
+
 function Table.filter<k , v>(tbl: HashMap<k , v> , predicate: (Key: k , value: v) -> ())
 	local _tbl = {}
 	for key , value in tbl do
