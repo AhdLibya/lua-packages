@@ -65,11 +65,20 @@ local function  find_or_create_folder(Parent: Instance , Name: string)
 	return instance
 end
 
+local function for_children(parent: Instance , callback : (instance: Instance) -> ())
+	local children =  parent:GetChildren()
+	for _ , instance in children do
+		task.spawn(callback , instance)
+	end
+end
+
+
 return {
 	clear_instance 			= ClearInstance;
 	get_value				= GetValue;
 	import 					= Import;
 	disconnect_events		= DisconnectEvents;
 	load_modules 			= load_modules;
-	find_or_create_folder 	= find_or_create_folder
+	find_or_create_folder 	= find_or_create_folder;
+	for_children 			= for_children;
 }
