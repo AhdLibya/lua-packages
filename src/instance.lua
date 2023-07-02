@@ -45,9 +45,9 @@ local function DisconnectEvents(Listenr: RBXScriptConnection | {RBXScriptConnect
 	end
 end
 
-local function load_modules(parent: Instance , deep: boolean)
+local function load_modules<v>(parent: Instance , deep: boolean)
 	local children = deep == true and parent:GetDescendants() or parent:GetChildren()
-	local tbl = {} :: {[string]: table}
+	local tbl = {} :: {[string]: v}
 	for _ , module in children do
 		if not module:IsA("ModuleScript") then continue end
 		tbl[module.Name] = require(module)
