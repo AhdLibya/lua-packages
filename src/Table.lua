@@ -146,6 +146,14 @@ function Table.get_key_changed<v>(new: Dictionarie<v> , old: Dictionarie<v>)
 	return keys
 end
 
+function Table.HashSize<k , v>(HashMap: HashMap<k ,v>)
+	local len = 0
+	for _ , _ in HashMap do
+		len += 1
+	end
+	return len
+end
+
 function Table.clone_object()
 	
 end
