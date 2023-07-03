@@ -146,7 +146,7 @@ function Table.get_key_changed<v>(new: Dictionarie<v> , old: Dictionarie<v>)
 	return keys
 end
 
-function Table.HashSize<k , v>(HashMap: HashMap<k ,v>)
+function Table.hash_size<k , v>(HashMap: HashMap<k ,v>)
 	local len = 0
 	for _ , _ in HashMap do
 		len += 1
