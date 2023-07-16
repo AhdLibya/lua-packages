@@ -1,7 +1,7 @@
-local function ClearInstance(ts: number , p_Instance: Instance)
+local function clear_instance(instance: Instance, ts: number?)
 	task.delay(ts or .1 ,function()
-		if not p_Instance then return end
-		p_Instance:Destroy()
+		if not instance then return end
+		instance:Destroy()
 	end)
 end
 
@@ -94,7 +94,7 @@ local function find_first_ancestor_with_attribute(instance: Instance , attribute
 end
 
 return {
-    clear_instance          = ClearInstance;
+    clear_instance          = clear_instance;
     get_value               = get_value;
     import                  = import;
     disconnect_events       = disconnect_events;
