@@ -6,7 +6,6 @@ local types = {
 	['number']   = 'IntValue';
 	['string']   = 'StringValue';
 	['boolean']  = 'BoolValue';
-	['function'] = 'StringValue'
 }
 
 local DEFAULT_FOLDER_NAME = 'THIS_IS_THE_DEFAULT_NAME'
@@ -21,7 +20,7 @@ local function CreateValueInstance(ClassName , Name)
 	return instance
 end
 
-local function CreateFolder(Parent : Instance , Name : string)
+local function get_folder(Parent : Instance , Name : string)
 	local subfolder 
 	local alreadyCreated = Parent:FindFirstChild(Name) and Parent:FindFirstChild(Name):IsA('Folder')
 	if alreadyCreated then 
@@ -57,33 +56,48 @@ function Table.create_folder_value<T>(T: T , Name: string)
 	return Parentfolder
 end
 
-function Table.transform_to_instance(t , Name)
+function Table.transform_to_vlaue_base_instance(tbl: Dictionarie<any> , Name: string)
+	local container = Instance.new("StringValue")
+	container.Name = Name
+	Table.for_each(tbl , function(key, value)
+		if typeof(value) == "table" then
+			local sub_value = Table.transform_to_vlaue_base_instance(value , key)
+			sub_value.Parent = container
+		else
+			container:SetAttribute(key , value)
+		end
+	end)
+	container.Value = game.HttpService:JSONEncode(tbl)
+	return container
+end
+
+function Table.transform_to_folder_instance(tbl: Dictionarie<any> , Name)
 	local Parentfolder = Instance.new('Folder')
-	Parentfolder.Name = Name or DEFAULT_FOLDER_NAME
-	local function Transform(classname : string | number , value)
-		if types[typeof(value)] and typeof(value) ~= 'function' then
-			local subfolder = CreateFolder(Parentfolder , 'Values')
-			local _value = CreateValueInstance(types[typeof(value)],tostring(classname))
-			_value.Parent = subfolder
-			_value.Name = classname
-		elseif typeof(value) == "function" then
-			local subfolder = CreateFolder(Parentfolder , 'functions')
-			local func = Instance.new('RemoteFunction')
-			func.Name = classname
-			func.Parent = subfolder
+	Parentfolder.Name = Name or "Folder"
+	for instance_name , value in tbl do
+		local class_name = types[typeof(value)]
+		if class_name then
+			local instance = Instance.new(class_name)
+			instance.Name = instance_name
+			instance.Parent = Parentfolder
 		elseif typeof(value) == "table" then
-			local subfolder = Table.transform_to_instance(value , classname or DEFAULT_FOLDER_NAME..tostring(tonumber(classname)))
-			subfolder.Parent = Parentfolder
-		elseif typeof(value) == "RBXScriptSignal" or "RBXScriptConnection" then
-			local subfolder = CreateFolder(Parentfolder , 'Signals')
-			local Signal = Instance.new('BindableEvent')
-			Signal.Parent = subfolder
+			local sub_folder = Table.transform_to_folder_instance(value , instance_name)
+			sub_folder.Parent = Parentfolder
 		end
 	end
-	for classname , value in pairs(t) do
-		task.spawn(Transform , classname , value )
-	end
 	return Parentfolder
+end
+
+function Table.transform(instance: Instance)
+	local tbl = {}
+	Table.for_each(instance:GetAttributes() , function(name , value)
+		tbl[name] = value
+	end)
+	Table.for_each(instance:GetChildren() , function(_ , child)
+		local index = tonumber(child.Name) or child.Name
+		tbl[index] = Table.transform(child)
+	end)
+	return tbl
 end
 
 function Table.to_instance_props(instance : Instance , Props : Dictionarie<any>)
@@ -100,7 +114,7 @@ function Table.table_to_attribute(instance : Instance , Props : Dictionarie<any>
 end
 
 function Table.update_values(folder: Folder , data: Dictionarie<any>)
-	assert(typeof(folder) == "Instance" and folder:IsA("Folder") , ("table expacted got (%s)"):format(typeof(data)))
+	assert(typeof(folder) == "Instance" and folder:IsA("Folder") , ("Folder expacted got (%s)"):format(typeof(data)))
 	assert(typeof(data) == "table" , ("table expacted got (%s)"):format(typeof(data)))
 	for name , value in data do
 		local child = folder:FindFirstChild(name)
@@ -154,10 +168,19 @@ function Table.hash_size<k , v>(HashMap: HashMap<k ,v>)
 	return len
 end
 
-function Table.clone_object()
-	
+function Table.clone_object<t>(t: t)
+	local copy: t = {}
+	for key, value in (t) do
+		if typeof(value) == "table" then
+			copy[key] = Table.clone_object(value)
+		else
+			copy[key] = value
+		end
+	end
+	return copy
 end
 
-Table.create_folder_once = CreateFolder
+
+Table.create_folder_once = get_folder
 
 return Table
