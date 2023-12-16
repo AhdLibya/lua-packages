@@ -50,7 +50,7 @@ function Table.create_folder_value<T>(T: T , Name: string)
 			subfolder.Parent = Parentfolder
 		end
 	end
-	for key, value in pairs(T) do
+	for key, value in (T:: any) do
 		task.spawn(Create , key , value)
 	end
 	return Parentfolder
@@ -168,16 +168,30 @@ function Table.hash_size<k , v>(HashMap: HashMap<k ,v>)
 	return len
 end
 
-function Table.clone_object<t>(t: t)
-	local copy: t = {}
-	for key, value in (t) do
+function Table.clone_object<T>(t: T):  T
+	local copy = {}
+	for key, value in (t:: any) do
 		if typeof(value) == "table" then
 			copy[key] = Table.clone_object(value)
 		else
 			copy[key] = value
 		end
 	end
-	return copy
+	return copy :: any
+end
+
+
+
+function Table.make_readonly<T>(object: T): T
+	local Proxy = setmetatable({} , {
+		__index = function(self , key)
+			return (object :: any)[key]
+		end,
+		__newindex = function()
+			error("Cannot modify read only table")
+		end,
+	})
+	return table.freeze(Proxy) :: any
 end
 
 
