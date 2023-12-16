@@ -137,7 +137,11 @@ function Table.filter<k , v>(tbl: HashMap<k , v> , predicate: (Key: k , value: v
 	local _tbl = {}
 	for key , value in tbl do
 		if not predicate(key , value) then continue end
-		_tbl[key] = value
+		if typeof(key) == "number" then
+			_tbl[#_tbl+1] = value
+		else
+			_tbl[key] = value
+		end
 	end
 	return _tbl
 end
