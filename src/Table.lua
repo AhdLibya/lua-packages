@@ -199,6 +199,18 @@ function Table.make_readonly<T>(object: T): T
 end
 
 
+function Table.dictionarie_to_array<T>(dictionarie: Dictionarie<T>)
+	local array = {}
+	for _, value in dictionarie do
+		if typeof(value) == "table" then
+			array[#array+1] = Table.clone_object(value)
+			continue
+		end
+		array[#array+1] = value
+	end
+	return array :: Array<T>
+end
+
 Table.create_folder_once = get_folder
 
 return Table
